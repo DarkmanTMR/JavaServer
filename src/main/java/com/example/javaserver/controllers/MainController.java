@@ -2,9 +2,7 @@ package com.example.javaserver.controllers;
 
 
 
-import com.example.javaserver.dao.CarDAO;
 import com.example.javaserver.dao.ClientDAO;
-import com.example.javaserver.models.Car;
 import com.example.javaserver.models.Client;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,28 +14,10 @@ public class MainController {
 
 
 
-    private CarDAO carDAO;
 
-    public MainController(CarDAO carDAO) {
-        this.carDAO = carDAO;
-    }
-
-
-    @GetMapping("/cars")
-    public List<Car> cars() {
-        List<Car> all = carDAO.findAll();
-        return all;
-    }
-
-        @PostMapping("/car")
-        public void saveCar(@RequestBody Car car) {
-            System.out.println(car);
-            carDAO.save(car);
-
-        }
 
         private ClientDAO clientDAO;
-    public void MainController(ClientDAO clientDAO){
+    public  MainController(ClientDAO clientDAO){
         this.clientDAO = clientDAO;
     }
 
@@ -54,6 +34,6 @@ public class MainController {
         clientDAO.save(client);
 
     }
-    }
+}
 
 
