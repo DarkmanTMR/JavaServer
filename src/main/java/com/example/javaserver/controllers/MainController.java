@@ -1,59 +1,56 @@
 package com.example.javaserver.controllers;
 
 
-
-import com.example.javaserver.dao.CarDAO;
-import com.example.javaserver.dao.ClientDAO;
-import com.example.javaserver.models.Car;
-import com.example.javaserver.models.Client;
+import com.example.javaserver.dao.UserDAO;
+import com.example.javaserver.models.User;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
+
 
 @RestController
-//@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
 public class MainController {
 
+    private UserDAO userDAO;
 
 
-    private CarDAO carDAO;
-
-    public MainController(CarDAO carDAO) {
-        this.carDAO = carDAO;
+    @GetMapping("/users")
+    public List<User> users() {
+        List<User> users = userDAO.findAll();
+        return users;
     }
 
+    @PostMapping("/users")
+    public User saveUser(@RequestBody User user) {
+        userDAO.save(user);
+        return user;
 
-    @GetMapping("/cars")
-    public List<Car> cars() {
-        List<Car> all = carDAO.findAll();
-        return all;
+
     }
 
-        @PostMapping("/car")
-        public void saveCar(@RequestBody Car car) {
-            System.out.println(car);
-            carDAO.save(car);
-
-        }
-
-        private ClientDAO clientDAO;
-    public void MainController(ClientDAO clientDAO){
-        this.clientDAO = clientDAO;
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable int id) {
+        return userDAO.findById(id).get();
     }
 
-
-        @GetMapping("/clients")
-    public List<Client> clients() {
-        List<Client> all = clientDAO.findAll();
-        return all;
-        }
-
-    @PostMapping("/client")
-    public void saveClient(@RequestBody Client client) {
-        System.out.println(client);
-        clientDAO.save(client);
-
-    }
+    @PatchMapping("/users")
+    public User updateUser(@RequestBody User userFromrequest) {
+        User userFromDb = userDAO.getById(userFromrequest.getId());
+        userDAO.save(userFromrequest);
+        return userFromrequest;
     }
 
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Integer id) {
+        userDAO.deleteById(id);
+    }
 
+    @PostMapping("/saveUserWithCar")
+    public void saveUserWIthCar(@RequestBody User user) {
+        System.out.println(user);
+
+
+    }
+
+}
