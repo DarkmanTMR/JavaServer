@@ -18,7 +18,7 @@ public class User {
     private String name;
     private String password;
     private String email;
-
+    private boolean isActivated = false;
 
 
     public User(String name, String password, String email) {

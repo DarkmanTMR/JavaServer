@@ -29,9 +29,18 @@ public class UserController {
             mailService.sendMyMessage(user);
     }
 
+    @GetMapping("/activate/{id}")
+    public void activateUser (@PathVariable int id){
+        User user = userDAO.getById(id);
+        userDAO.save(user);
+    }
+
+
     @PostMapping("")
     public User saveUser(@RequestBody User user) {
+        System.out.println(user);
         userDAO.save(user);
+        System.out.println(user);
         return user;
     }
 
@@ -52,11 +61,5 @@ public class UserController {
         userDAO.deleteById(id);
     }
 
-    @PostMapping("/saveUserWithCar")
-    public void saveUserWithCar(@RequestBody User user) {
-        System.out.println(user);
-        userDAO.save(user);
 
-
-    }
 }
