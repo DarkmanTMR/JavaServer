@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RestController("/users")                                   //для спрощення пропису адреси ("/users" -> "")
+@RestController()
+@RequestMapping("/users")                                   //для спрощення пропису адреси ("/users" -> "")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
 @AllArgsConstructor
 public class UserController {
@@ -50,10 +51,10 @@ public class UserController {
     }
 
     @PatchMapping("")
-    public User updateUser(@RequestBody User userFromrequest) {
-        User userFromDb = userDAO.getById(userFromrequest.getId());
-        userDAO.save(userFromrequest);
-        return userFromrequest;
+    public User updateUser(@RequestBody User userFromRequest) {
+        User userFromDb = userDAO.getById(userFromRequest.getId());
+        userDAO.save(userFromRequest);
+        return userFromRequest;
     }
 
     @DeleteMapping("/{id}")
