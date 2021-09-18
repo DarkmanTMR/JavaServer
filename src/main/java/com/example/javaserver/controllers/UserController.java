@@ -2,65 +2,61 @@ package com.example.javaserver.controllers;
 
 import com.example.javaserver.dao.UserDAO;
 import com.example.javaserver.models.User;
-import com.example.javaserver.services.MailService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RestController()
-@RequestMapping("/users")                                   //для спрощення пропису адреси ("/users" -> "")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
+
 @AllArgsConstructor
+@RestController
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
+@RequestMapping("/users")                                   //для спрощення пропису адреси ("/users" -> "")
 public class UserController {
 
     private UserDAO userDAO;
-    private MailService mailService;
-
-
-    @GetMapping("")
-    public List<User> users() {
-        List<User> users = userDAO.findAll();
-        return users;
-    }
 
     @PostMapping("/registration")
-    public void userRegistration(@RequestBody User user){
-           System.out.println(user);
-            userDAO.save(user);
-            mailService.sendMyMessage(user);
+    public void registration(@RequestBody User user){
+        System.out.println(user);
+        byte[] secret = "boom".getBytes();
+        String jwtoken = Jwts.builder()
+                        .setSubject(user.getName())
+                        .signWith(SignatureAlgorithm.HS512, secret)
+                                .compact();
+                System.out.println(jwtoken);
+
+        user.setActivationToken(jwtoken);
+        userDAO.save(user);
+
+//                String subject = Jwts.parser()
+//                        .setSigningKey(secret)
+//                        .parseClaimsJws(jwtoken)
+//                        .getBody()
+//                        .getSubject();
+//                System.out.println(subject);
+
     }
 
-    @GetMapping("/activate/{id}")
-    public void activateUser (@PathVariable int id){
-        User user = userDAO.getById(id);
+    @GetMapping("/activate/{token}")
+    public void activate (@PathVariable String token){
+        System.out.println(token);
+//        User user = userDAO.findByActivationToken(token);
+        User user = userDAO.userByToken(token);
+    if (!user.isActivated()){
+        user.setActivated(true);
         userDAO.save(user);
     }
 
-
-    @PostMapping("")
-    public User saveUser(@RequestBody User user) {
         System.out.println(user);
-        userDAO.save(user);
+    }
+
+    @PostMapping("/login")
+    public void login(@RequestBody User requestUser){
+        System.out.println(requestUser);
+        User user = userDAO.findByNameAndPassword(requestUser.getName(), requestUser.getPassword());
         System.out.println(user);
-        return user;
     }
-
-    @GetMapping("{id}")
-    public User getUser(@PathVariable int id) {
-        return userDAO.findById(id).get();
-    }
-
-    @PatchMapping("")
-    public User updateUser(@RequestBody User userFromRequest) {
-        User userFromDb = userDAO.getById(userFromRequest.getId());
-        userDAO.save(userFromRequest);
-        return userFromRequest;
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id) {
-        userDAO.deleteById(id);
-    }
-
-
 }
+// TODO: 18.09.2021 38:50 

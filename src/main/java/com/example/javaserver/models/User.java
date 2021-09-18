@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 
 public class User {
     @Column(nullable = false)
@@ -19,6 +20,8 @@ public class User {
     private String password;
     private String email;
     private boolean isActivated = false;
+    private String activationToken;
+    private String loginToken;
 
 
     public User(String name, String password, String email) {
